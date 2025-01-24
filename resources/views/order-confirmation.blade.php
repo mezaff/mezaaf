@@ -45,15 +45,15 @@
                 </div>
                 <div class="order-info__item">
                     <label>Date</label>
-                    <span>{{ $order->created_at }}</span>
+                    <span>{{ $order->created_at->format('M d, Y') }}</span>
                 </div>
                 <div class="order-info__item">
                     <label>Total</label>
-                    <span>{{ $order->total }}</span>
+                    <span>{{ formatRupiah($order->total) }}</span>
                 </div>
                 <div class="order-info__item">
-                    <label>Paymetn Method</label>
-                    <span>{{ $order->transaction->mode }}</span>
+                    <label>Payment Method</label>
+                    <span>{{ strtoupper($order->transactions->mode) }}</span>
                 </div>
             </div>
             <div class="checkout__totals-wrapper">
@@ -72,7 +72,7 @@
                                 <td>
                                     {{ $item->product->name }} x {{ $item->quantity }}
                                 </td>
-                                <td>
+                                <td class="text-right">
                                     {{ formatRupiah($item->price) }}
                                 </td>
                             </tr>
@@ -83,23 +83,23 @@
                         <tbody>
                             <tr>
                                 <th>SUBTOTAL</th>
-                                <td>{{ formatRupiah($order->subtotal) }}</td>
+                                <td class="text-right">{{ formatRupiah($order->subtotal) }}</td>
                             </tr>
                             <tr>
                                 <th>DISCOUNT</th>
-                                <td>{{ formatRupiah($order->discount) }}</td>
+                                <td class="text-right">{{ formatRupiah($order->discount) }}</td>
                             </tr>
                             <tr>
                                 <th>SHIPPING</th>
-                                <td>Free shipping</td>
+                                <td class="text-right">Free shipping</td>
                             </tr>
                             <tr>
                                 <th>VAT</th>
-                                <td>{{ formatRupiah($order->tax) }}</td>
+                                <td class="text-right">{{ formatRupiah($order->tax) }}</td>
                             </tr>
                             <tr>
                                 <th>GRAND TOTAL</th>
-                                <td>{{ formatRupiah($order->total) }}</td>
+                                <td class="text-right">{{ formatRupiah($order->total) }}</td>
                             </tr>
                         </tbody>
                     </table>

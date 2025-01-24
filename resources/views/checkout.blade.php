@@ -230,14 +230,14 @@
                                 <input class="form-check-input form-check-input_fill" type="radio" name="mode"
                                     id="mode1" value="card">
                                 <label class="form-check-label" for="mode1">
-                                    Debit or credit card
+                                    Debit or Credit Card
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input form-check-input_fill" type="radio" name="mode"
-                                    id="mode2" value="paypal">
+                                    id="mode2" value="midtrans">
                                 <label class="form-check-label" for="mode2">
-                                    Paypal
+                                    Midtrans
                                 </label>
                             </div>
                             <div class="form-check">

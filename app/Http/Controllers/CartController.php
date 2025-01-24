@@ -130,20 +130,14 @@ class CartController extends Controller
 
     public function place_an_order(Request $request)
     {
+
         // dd(Session::all());
-        // dd(Session::get('order_id'));
-
         $user_id = Auth::user()->id;
-        $address = Address::where('user_id', $user_id)->where('isdefault', 1)->first();
-
+        $address = Address::where('user_id', $user_id)->where('isdefault', true)->first();
         if (!$address) {
             $request->validate([
                 'name' => 'required|max:100',
-                'phone' => [
-                    'required',
-                    'numeric',
-                    'regex:/^(?:\+62|62|08)[1-9][0-9]{7,11}$/'
-                ],
+                'phone' => 'required|numeric|digits:10',
                 'zip' => 'required|numeric|digits:5',
                 'state' => 'required',
                 'city' => 'required',
@@ -165,78 +159,75 @@ class CartController extends Controller
             $address->country = 'Indonesia';
             $address->isdefault = true;
             $address->save();
-            $this->setAmountForCheckout();
-
-            $order = new Order();
-            $order->user_id = $user_id;
-
-            $order->subtotal = Session::get('checkout')['subtotal'];
-            $order->discount = Session::get('checkout')['discount'];
-            $order->tax = Session::get('checkout')['tax'];
-            $order->total = Session::get('checkout')['total'];
-            $order->name = $address->name;
-            $order->phone = $address->phone;
-            $order->locality = $address->locality;
-            $order->address = $address->address;
-            $order->city = $address->city;
-            $order->state = $address->state;
-            $order->country = $address->country;
-            $order->landmark = $address->landmark;
-            $order->zip = $address->zip;
-            $order->save();
-
-            foreach (Cart::instance('cart')->content() as $item) {
-                $orderItem = new OrderItem();
-                $orderItem->product_id = $item->id;
-                $orderItem->order_id = $order->id;
-                $orderItem->price = $item->price;
-                $orderItem->quantity = $item->qty;
-                $orderItem->save();
-            }
-
-            if ($request->mode == 'card') {
-                // Tangani metode pembayaran card
-            } else if ($request->mode == 'paypal') {
-                // Tangani metode pembayaran PayPal
-            } else if ($request->mode == 'cod') {
-                $transaction = new Transaction();
-                $transaction->order_id = $order->id;
-                $transaction->user_id = $user_id;
-                $transaction->mode = $request->mode;
-                $transaction->status = 'pending';
-                $transaction->save();
-            }
-
-            Cart::instance('cart')->destroy();
-            Session::forget('checkout');
-            Session::forget('coupon');
-            Session::forget('discounts');
-            Session::put('order_id', $order->id);
-
-            return redirect()->route('cart.order.confirmation', compact('order'));
         }
+        $this->setAmountforCheckout();
+
+        $order = new Order();
+
+        $order->user_id = $user_id;
+        $order->subtotal = Session::get('checkout')['subtotal'];
+        $order->discount = Session::get('checkout')['discount'];
+        $order->tax = Session::get('checkout')['tax'];
+        $order->total = Session::get('checkout')['total'];
+        $order->name = $address->name;
+        $order->phone = $address->phone;
+        $order->locality = $address->locality;
+        $order->address = $address->address;
+        $order->city = $address->city;
+        $order->state = $address->state;
+        $order->country = $address->country;
+        $order->landmark = $address->landmark;
+        $order->zip = $address->zip;
+        $order->save();
+
+        foreach (Cart::instance('cart')->content() as $item) {
+            $orderItem = new OrderItem();
+            $orderItem->product_id = $item->id;
+            $orderItem->order_id = $order->id;
+            $orderItem->price  = $item->price;
+            $orderItem->quantity = $item->qty;
+            $orderItem->save();
+        }
+        if ($request->mode == 'card') {
+            # code...
+        } elseif ($request->mode == 'midtrans') {
+            # code...
+        } else if ($request->mode == 'cod') {
+            $transaction = new Transaction();
+            $transaction->user_id = $user_id;
+            $transaction->order_id = $order->id;
+            $transaction->mode = $request->mode;
+            $transaction->status = "pending";
+            $transaction->save();
+        }
+
+        Cart::instance('cart')->destroy();
+        Session::forget('checkout');
+        Session::forget('coupon');
+        Session::forget('discounts');
+        Session::put('order_id', $order->id);
+        return redirect()->route('cart.order.confirmation');
     }
 
-    public function setAmountForCheckout()
+    public function setAmountforCheckout()
     {
         if (!Cart::instance('cart')->content()->count() > 0) {
             Session::forget('checkout');
             return;
         }
-
         if (Session::has('coupon')) {
             Session::put('checkout', [
-                'discount' => intval(Session::get('discounts')['discount']),
-                'subtotal' => intval(Session::get('discounts')['subtotal']),
-                'tax' => intval(Session::get('discounts')['tax']),
-                'total' => intval(Session::get('discounts')['total']),
+                'discount' => Session::get('discounts')['discount'],
+                'subtotal' => Session::get('discounts')['subtotal'],
+                'tax' => Session::get('discounts')['tax'],
+                'total' => Session::get('discounts')['total'],
             ]);
         } else {
             Session::put('checkout', [
                 'discount' => 0,
-                'subtotal' => intval(Cart::instance('cart')->subtotal(0, '.', '')),
-                'tax' => intval(Cart::instance('cart')->tax(0, '.', '')),
-                'total' => intval(Cart::instance('cart')->total(0, '.', '')),
+                'subtotal' => Cart::instance('cart')->subtotal(),
+                'tax' => Cart::instance('cart')->tax(),
+                'total' => Cart::instance('cart')->total(),
             ]);
         }
     }
