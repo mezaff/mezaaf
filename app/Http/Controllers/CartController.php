@@ -137,7 +137,11 @@ class CartController extends Controller
         if (!$address) {
             $request->validate([
                 'name' => 'required|max:100',
-                'phone' => 'required|numeric|digits:10',
+                'phone' => [
+                    'required',
+                    'numeric',
+                    'regex:/^(?:\+62|62|08)[1-9][0-9]{7,11}$/'
+                ],
                 'zip' => 'required|numeric|digits:5',
                 'state' => 'required',
                 'city' => 'required',
@@ -225,9 +229,9 @@ class CartController extends Controller
         } else {
             Session::put('checkout', [
                 'discount' => 0,
-                'subtotal' => Cart::instance('cart')->subtotal(),
-                'tax' => Cart::instance('cart')->tax(),
-                'total' => Cart::instance('cart')->total(),
+                'subtotal' => str_replace(',', '', Cart::instance('cart')->subtotal()),
+                'tax' => str_replace(',', '', Cart::instance('cart')->tax()),
+                'total' => str_replace(',', '', Cart::instance('cart')->total()),
             ]);
         }
     }

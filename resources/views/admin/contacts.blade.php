@@ -3,7 +3,7 @@
 <div class="main-content-inner">
     <div class="main-content-wrap">
         <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-            <h3>Categories</h3>
+            <h3>All Messages</h3>
             <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                 <li>
                     <a href="{{ route('admin.index') }}">
@@ -14,7 +14,7 @@
                     <i class="icon-chevron-right"></i>
                 </li>
                 <li>
-                    <div class="text-tiny">Categories</div>
+                    <div class="text-tiny">Coupons</div>
                 </li>
             </ul>
         </div>
@@ -32,7 +32,7 @@
                         </div>
                     </form>
                 </div>
-                <a class="tf-button style-1 w208" href="{{ route('admin.category.add') }}"><i class="icon-plus"></i>Add
+                <a class="tf-button style-1 w208" href="{{ route('admin.coupon.add') }}"><i class="icon-plus"></i>Add
                     new</a>
             </div>
             <div class="wg-table table-all-user">
@@ -45,35 +45,25 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Name</th>
-                                <th>Slug</th>
-                                <th>Products</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Message</th>
+                                <th>Date</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($categories as $category)
+                            @foreach ($contacts as $contact)
                             <tr>
-                                <td>{{ $category->id }}</td>
-                                <td class="pname">
-                                    <div class="image">
-                                        <img src="{{ asset('uploads/categories') }}/{{ $category->image }}"
-                                            alt="{{ $category->name }}" class="image">
-                                    </div>
-                                    <div class="name">
-                                        <a href="#" class="body-title-2">{{ $category->name }}</a>
-                                    </div>
-                                </td>
-                                <td>{{ $category->slug }}</td>
-                                <td><a href="#" target="_blank">{{ $category->products()->count() }}</a></td>
+                                <td>{{ $contact->id }}</td>
+                                <td>{{ $contact->name }}</td>
+                                <td>{{ $contact->phone }}</td>
+                                <td>{{ $contact->email }}</td>
+                                <td>{{ $contact->comment }}</td>
+                                <td>{{ $contact->created_at }}</td>
                                 <td>
                                     <div class="list-icon-function">
-                                        <a href="{{ route('admin.category.edit', ['id' => $category->id]) }}">
-                                            <div class="item edit">
-                                                <i class="icon-edit-3"></i>
-                                            </div>
-                                        </a>
-                                        <form action="{{ route('admin.category.delete', ['id' => $category->id]) }}"
-                                            method="POST">
+                                        <form action="{{ route('admin.contact.delete', $contact->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
                                             <div class="item text-danger delete">
@@ -87,10 +77,10 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="divider"></div>
-                <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
-                    {{ $categories->links('pagination::bootstrap-5') }}
-                </div>
+            </div>
+            <div class="divider"></div>
+            <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
+                {{ $contacts->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>

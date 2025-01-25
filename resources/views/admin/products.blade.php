@@ -22,15 +22,18 @@
         <div class="wg-box">
             <div class="flex items-center justify-between gap10 flex-wrap">
                 <div class="wg-filter flex-grow">
-                    <form class="form-search">
+                    {{-- <form class="form-search">
                         <fieldset class="name">
-                            <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value=""
-                                aria-required="true" required="">
+                            <input type="text" placeholder="Search here..." class="" name="name" id="search-input"
+                                tabindex="2" value="" aria-required="true" required="" autocomplete="off">
                         </fieldset>
                         <div class="button-submit">
                             <button class="" type="submit"><i class="icon-search"></i></button>
                         </div>
-                    </form>
+                        <div class="box-content-search">
+                            <ul id="box-content-search"></ul>
+                        </div>
+                    </form> --}}
                 </div>
                 <a class="tf-button style-1 w208" href="{{ route('admin.product.add') }}"><i class="icon-plus"></i>Add
                     new</a>
@@ -42,17 +45,17 @@
                 <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>SalePrice</th>
-                            <th>SKU</th>
-                            <th>Category</th>
-                            <th>Brand</th>
-                            <th>Featured</th>
-                            <th>Stock</th>
-                            <th>Quantity</th>
-                            <th>Action</th>
+                            <th class="text-center">ID</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Sale Price</th>
+                            <th class="text-center">SKU</th>
+                            <th class="text-center">Category</th>
+                            <th class="text-center">Brand</th>
+                            <th class="text-center">Featured</th>
+                            <th class="text-center">Stock</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,21 +73,21 @@
                                     <div class="text-tiny mt-3">{{ $product->slug }}</div>
                                 </div>
                             </td>
-                            <td>{{ formatRupiah($product->regular_price) }}</td>
-                            <td>{{ formatRupiah($product->sale_price) }}</td>
+                            <td class="text-right">{{ formatRupiah($product->regular_price) }}</td>
+                            <td class="text-right">{{ formatRupiah($product->sale_price) }}</td>
                             <td>{{ $product->SKU }}</td>
                             <td>{{ $product->category->name }}</td>
                             <td>{{ $product->brand->name }}</td>
                             <td>{{ $product->featured == 0 ? 'No' : 'Yes' }}</td>
                             <td>{{ $product->stock_status }}</td>
-                            <td>{{ $product->quantity }}</td>
-                            <td>
+                            <td class="text-center">{{ $product->quantity }}</td>
+                            <td class="text-center">
                                 <div class="list-icon-function">
-                                    <a href="#" target="_blank">
+                                    {{-- <a href="#" target="_blank">
                                         <div class="item eye">
                                             <i class="icon-eye"></i>
                                         </div>
-                                    </a>
+                                    </a> --}}
                                     <a href="{{ route('admin.product.edit', ['id' => $product->id]) }}">
                                         <div class="item edit">
                                             <i class="icon-edit-3"></i>
@@ -135,5 +138,55 @@ if (result) {
     });
  });
  });
+
+
+ //Search
+//  $(function () {
+//       $('#search-input').on('keyup', function () {
+//         var searchQuery = $(this).val();
+//         if (searchQuery.length > 0) {
+//           $.ajax({
+//             type: 'GET',
+//             url: '{{ route('admin.search') }}',
+//             data: { query: searchQuery },
+//             dataType: 'json',
+//             success: function (data) {
+//               $('#box-content-search').html('');
+//               $.each(data, function (index, item) {
+//                 var url = "{{ route('admin.product.edit', ['id' => 'product_id_placeholder']) }}";
+//                 var link = url.replace('product_id_placeholder', item.id);
+  
+//                 $('#box-content-search').append(`
+//                   <li>
+//                     <ul>
+//                       <li class="product-item gap14 mb-10">
+//                         <div class="image no-bg">
+//                           <a href="${link}" class="body-text">
+//                             <img src="{{ asset('uploads/products/thumbnails') }}/${item.image}" alt="${item.name}">
+//                           </a>
+//                         </div>
+//                         <div class="flex items-center justify-between gap20 flex-grow">
+//                           <div class="name">
+//                             <a href="${link}" class="body-text">${item.name}</a>
+//                           </div>
+//                         </div>
+//                       </li>
+//                       <li class="mb-10">
+//                         <div class="divider"></div>
+//                       </li>
+//                     </ul>
+//                   </li>
+//                 `);
+//               });
+//             },
+//             error: function () {
+//               console.error('Error fetching search results.');
+//             },
+//           });
+//         } else {
+//           $('#box-content-search').html('');
+//         }
+//       });
+//     });
 </script>
 @endpush
